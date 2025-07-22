@@ -31,6 +31,16 @@ class LogsMonitoringApplication:
     def reorder_events_by_pid_time(self, events):
         """Uses methods from Utils to sort events"""
         return Utils.sort_events_by_pid_time(events)
+    
+
+    def select_events(self, events):
+        """Selects events based on total duration"""
+        
+        for i in range(0, len(events), 2):
+            diff = Utils.get_seconds_from_time(events[i]["timestamp"]) - Utils.get_seconds_from_time(events[i + 1]["timestamp"])
+            total_duration = Utils.format_output_minutes_seconds(diff)
+            print(f"Total duration: {total_duration} for event: {events[i]["event_type"]} with pid: {events[i]["pid"]}")
+        print('\n')
 
 
 if __name__ == "__main__":
@@ -52,6 +62,10 @@ if __name__ == "__main__":
 
         # Reorder job events
         reorder_job_events = log_monitoring_application.reorder_events_by_pid_time(job_events)
+
+        # Calculate job events duration
+        # Select job events based duration
+        log_monitoring_application.select_events(reorder_job_events)
 
     except Exception as ex:
         print(f"Exception found in application: {ex}")
