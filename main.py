@@ -1,9 +1,12 @@
+from event.event import Event
 from file.file import File
 from utils.utils import Utils
 
 
 FILE_NAME = "logs.log"
 NEW_FILE_NAME = "warning_error_logs.log"
+ERROR_MINUTES_THRESHOLD = 10
+WARNING_MINUTES_THRESHOLD = 5
 
 
 class LogsMonitoringApplication:
@@ -35,12 +38,40 @@ class LogsMonitoringApplication:
 
     def select_events(self, events):
         """Selects events based on total duration"""
-        
+
+        # Used to check against duplicate pids
+        seen = set()
+        # Add warning + error events 
+        warning_events = []
+
         for i in range(0, len(events), 2):
+            # Get difference (endtime - starttime) for adjacents jobs with different timestamps
             diff = Utils.get_seconds_from_time(events[i]["timestamp"]) - Utils.get_seconds_from_time(events[i + 1]["timestamp"])
+            
+            # Calculate diff in minutes
+            timestamp_in_minutes = Utils.extract_seconds_minutes(diff)[0]
+
+            # Total duration for a job event
             total_duration = Utils.format_output_minutes_seconds(diff)
             print(f"Total duration: {total_duration} for event: {events[i]["event_type"]} with pid: {events[i]["pid"]}")
+            
+            # Select jobs with duration greater than a threshold
+            if (timestamp_in_minutes >= WARNING_MINUTES_THRESHOLD or timestamp_in_minutes >= ERROR_MINUTES_THRESHOLD) and (events[i]["pid"] not in seen):
+                seen.add(events[i]["pid"])
+                warning_events.append(events[i])
+
         print('\n')
+
+        # Transform list of event
+        warning_events = [Event.select_properties(event) for event in warning_events]
+        # Write job report
+        self.write_job_report(warning_events)
+        print('\n')
+
+
+    def write_job_report(self, events):
+        """Uses helper class File to write content to file"""
+        File.write_to_file(NEW_FILE_NAME, events)
 
 
 if __name__ == "__main__":
