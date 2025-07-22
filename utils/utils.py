@@ -29,3 +29,9 @@ class Utils:
             # Print every row from input list by adding necessary space (col_widths[key]) between values
             print(" | ".join(f"{str(row[key]):<{col_widths[key]}}" for key in headers))
         print("\n")
+
+
+    @staticmethod
+    def sort_events_by_pid_time(events):
+        """Sort ascending list of dictionaries base on two criteria"""
+        return sorted(events, key = lambda v: (v["pid"], v["time"]), reverse=False)

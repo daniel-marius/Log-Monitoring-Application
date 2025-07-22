@@ -28,9 +28,14 @@ class LogsMonitoringApplication:
         self.events.extend(file_content)
 
 
+    def reorder_events_by_pid_time(self, events):
+        """Uses methods from Utils to sort events"""
+        return Utils.sort_events_by_pid_time(events)
+
+
 if __name__ == "__main__":
     try: 
-        
+
         # Create class instance
         log_monitoring_application = LogsMonitoringApplication()
 
@@ -44,6 +49,9 @@ if __name__ == "__main__":
         # Filter events by "TASK"
         task_events = log_monitoring_application.identify_event_type(event_type="TASK")
         log_monitoring_application.print_events(task_events)
+
+        # Reorder job events
+        reorder_job_events = log_monitoring_application.reorder_events_by_pid_time(job_events)
 
     except Exception as ex:
         print(f"Exception found in application: {ex}")
