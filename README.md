@@ -14,7 +14,7 @@ The goal of this application is to read logs files, measures how long each job t
 Clone the GitHub Repository [Log Monitoring App](https://github.com/daniel-marius/Log-Monitoring-Application)
 
 ```bash
-https://github.com/daniel-marius/Log-Monitoring-Application.git
+git clone https://github.com/daniel-marius/Log-Monitoring-Application.git
 ``` 
 
 Navigate to the root folder of the repository cloned
